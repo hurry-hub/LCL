@@ -1,0 +1,13 @@
+LICENSE.txt
+MANIFEST.in
+README.rst
+_uniout.py
+setup.cfg
+setup.py
+uniout.py
+examples/article.txt
+examples/read_article.py
+uniout.egg-info/PKG-INFO
+uniout.egg-info/SOURCES.txt
+uniout.egg-info/dependency_links.txt
+uniout.egg-info/top_level.txt
