@@ -96,4 +96,39 @@ class SoPmi:
                 'neg']).intersection(set(word_dict.key()))
             return pos_words, neg_words
         '''计算sopmi值'''
+        def compute_sopmi(cand_words, pos_words, neg_words, word_dict, co_dict,
+                all)：
+            pmi_dict = dict()
+            for candi_word in set(candi_words):
+                pos_sum = 0
+                neg_sum = 0
+                for pos_word in pos_words:
+                    p1 = word_dict[pos_word] / all
+                    p2 = word_dict[candi_word] / all
+                    pair = pos_word + '@' + candi_word
+                    if pair not in co_dict:
+                        continue
+                    p12 = co_dict[pair] / all
+                    pos_sum += compute_mi(p1, p2, p12)
+
+                for neg_word in neg_words:
+                    p1 = word_dict[neg_word] / all
+                    p2 = word_dict[candi_word] / all
+                    pair = neg_word + '@' + candi_word
+                    if pair not in co_dict:
+                        continue
+                    p12 = co_dict[pair] / all
+                    neg_sum += compute_mi(p1, p2, p12)
+
+                so_pmi = pos_sum - neg_sum
+                pmi_dict[candi_word] = so_pmi
+            return pmi_dict
+
+        word_dict, all = collect_worddict(seg_data)
+        co_dict, candi_words = collect_cowordsdict(cowords_list)
+        pos_words, neg_words = collect_sentiwords(sentiment_path, word_dict)
+        pmi_dict = compute_sopmi(candi_words, pos_words, beg_words, word_dict,
+                co_dict, all)
+        return pmi_dict
+
 
