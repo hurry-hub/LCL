@@ -99,7 +99,7 @@ class SoPmi:
             return pos_words, neg_words
         '''计算sopmi值'''
         def compute_sopmi(cand_words, pos_words, neg_words, word_dict, co_dict,
-                all)：
+                all):
             pmi_dict = dict()
             for candi_word in set(candi_words):
                 pos_sum = 0
@@ -151,11 +151,11 @@ class SoPmi:
             else:
                 neg_dict[word] = abs(word_score)
 
-        for word, pmi in sorted(pos_dict.items(, key = lambda asd:asd[1],
-            reverse = True)):
+        for word, pmi in sorted(pos_dict.items(), key = lambda asd:asd[1],
+            reverse = True):
             f_pos.write(word + ' ' + str(pmi) + ' ' + 'pos')
-        for word, pmi in sorted(neg_dict.items(, key = lambda asd:asd[1],
-            reverse = True)):
+        for word, pmi in sorted(neg_dict.items(), key = lambda asd:asd[1],
+            reverse = True):
             f_neg.write(word + ' ' + str(pmi) + ' ' + 'neg')
         f_neg.close()
         f_pos.close()
