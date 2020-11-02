@@ -11,6 +11,8 @@ class SoPmi:
     def _init_(self):
         self.train_path = './外卖评论.csv'
         self.sentiment_path = './sentiment_words.txt'
+        self.candineg_path = './candi_neg.txt'
+        self.candipos_path = './candi_pos.txt'
 
     '''分词'''
     def seg_corpus(self, train_data, sentiment_path):
@@ -130,5 +132,60 @@ class SoPmi:
         pmi_dict = compute_sopmi(candi_words, pos_words, beg_words, word_dict,
                 co_dict, all)
         return pmi_dict
+
+    '''保存结果'''
+    def save_candiwords(self, pmi_dict, candipos_path, candineg_path):
+        def get_tag(word):
+            if word:
+                return [item.flag for item in pseg.cut(word)][0]
+            else:
+                return 'x'
+        pos_dict = dict()
+        neg_dict = dict()
+        f_neg = open(candineg_path, 'w+')
+        f_pos = open(candipos_path, 'w+')
+
+        for word, word_score in pmi_dict.items():
+            if word_score > 0:
+                pos_dict[word] = word_score
+            else:
+                neg_dict[word] = abs(word_score)
+
+        for word, pmi in sorted(pos_dict.items(, key = lambda asd:asd[1],
+            reverse = True)):
+            f_pos.write(word + ' ' + str(pmi) + ' ' + 'pos')
+        for word, pmi in sorted(neg_dict.items(, key = lambda asd:asd[1],
+            reverse = True)):
+            f_neg.write(word + ' ' + str(pmi) + ' ' + 'neg')
+        f_neg.close()
+        f_pos.close()
+        return
+
+    def sopmi(self):
+        print('step1:...seg corpus...')
+        start_time = time.time()
+        seg_data = self.seg_corpus(self.train_path, self.sentiment_path)
+        end_time1 = time.time()
+        print('step1 finish:...cost {0}...'.format((end1_time1 - start_time)))
+        print('step2:...collect cowords...')
+        cowords_list = self.collect_cowords(self.sentiment_path, seg_data)
+        end_time2 = time.time()
+        print('step2 finish:...cost {0}...'.format((end_time2 - end_time1)))
+        print('step3:...compute sopmi...')
+        pmi_dict = self.collect_candiwords(seg_data, cowords_list,
+                self.sentiment_path)
+        end_time3 = time.time()
+        print('step3 finish:...cost {0}...'.format((end_time3 - end_time2)))
+        print('step4:...save candiwords...')
+        self.save_candiwords(pmi_dict, self.candipos_path, self.candineg_path)
+        end_time = time.time()
+        print('finish: cost {0}'.format(end_time - start_time))
+
+def test():
+    sopmier = SoPmi()
+    sopmier.sopmi()
+
+
+test()
 
 
