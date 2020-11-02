@@ -8,7 +8,7 @@ import jieba
 
 
 class SoPmi:
-    def _init_(self):
+    def __init__(self):
         self.train_path = './外卖评论.csv'
         self.sentiment_path = './sentiment_words.txt'
         self.candineg_path = './candi_neg.txt'
@@ -21,7 +21,7 @@ class SoPmi:
             jieba.add_word(word)
         seg_data = list()
         count = 0
-        for line in open(train_path, 'r'):
+        for line in open(train_data, 'r'):
             line = line.strip()
             count += 1
             if line:
@@ -79,7 +79,7 @@ class SoPmi:
             return word_dict, all
         '''统计此共现次数'''
         def collect_cowordsdict(cowords_list):
-            co_list = dict()
+            co_dict = dict()
             candi_words = list()
             for co_words in cowords_list:
                 candi_words.extend(cowords.split('@'))
@@ -95,7 +95,7 @@ class SoPmi:
                 'pos']).intersection(set(word_dict.keys()))
             neg_words = set([line.strip().split('\t')[0] for line in
                 open(sentiment_path) if line.strip().split('\t')[1] ==
-                'neg']).intersection(set(word_dict.key()))
+                'neg']).intersection(set(word_dict.keys()))
             return pos_words, neg_words
         '''计算sopmi值'''
         def compute_sopmi(cand_words, pos_words, neg_words, word_dict, co_dict,
@@ -129,7 +129,7 @@ class SoPmi:
         word_dict, all = collect_worddict(seg_data)
         co_dict, candi_words = collect_cowordsdict(cowords_list)
         pos_words, neg_words = collect_sentiwords(sentiment_path, word_dict)
-        pmi_dict = compute_sopmi(candi_words, pos_words, beg_words, word_dict,
+        pmi_dict = compute_sopmi(candi_words, pos_words, neg_words, word_dict,
                 co_dict, all)
         return pmi_dict
 
@@ -166,7 +166,7 @@ class SoPmi:
         start_time = time.time()
         seg_data = self.seg_corpus(self.train_path, self.sentiment_path)
         end_time1 = time.time()
-        print('step1 finish:...cost {0}...'.format((end1_time1 - start_time)))
+        print('step1 finish:...cost {0}...'.format((end_time1 - start_time)))
         print('step2:...collect cowords...')
         cowords_list = self.collect_cowords(self.sentiment_path, seg_data)
         end_time2 = time.time()
